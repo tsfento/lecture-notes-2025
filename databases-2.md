@@ -7,6 +7,15 @@
 
 ## Data Manipulation and Modification
 
+```sql
+CREATE TABLE students (
+    id int,
+    first_name varchar(255),
+    last_name varchar(255),
+    grade int
+);
+```
+
 ### INSERT INTO statement
 
 -   Purpose: To add new data to a database table.
@@ -49,6 +58,12 @@ WHERE id = 1;
 -   Explanation: Types of relationships between tables.
 -   Types: One-to-One, One-to-Many, Many-to-Many.
 
+## Codelabs Learning Assistant
+
+> [Codelabs Learning Assistant Demo](https://chatgpt.com/g/g-68484cbcb348819181c3f4137b0b7c49-codelabs-learning-assistant)
+>
+> -   Demonstrate for students how to use the Codelabs Learning Assistant for creative exploration: "Can you suggest a real-world scenario where a many-to-many relationship is needed?"
+
 ### Primary and Foreign Keys
 
 -   Role: Ensuring data integrity and establishing table relationships.
@@ -57,14 +72,51 @@ WHERE id = 1;
 
 -   Purpose: To reduce redundancy and dependency in data.
 -   1NF: It is used to ensure that the data in the database is atomic. Atomic means that each attribute in a table contains only one value. It also means that each row in a table contains only one instance of an entity.
--   2NF: It is used to ensure that the data in the database is in the right place. It is used to ensure that each attribute in a table is dependent on the primary key.
--   3NF: It is used to ensure that the data in the database is not redundant. It is used to ensure that each attribute in a table is dependent on the primary key.
+-   2NF: It is used to ensure that the data in the database is in the right place. It is used to ensure that each attribute in a table is dependent on the primary key. Ensures that all non-key data depends on the whole primary key, not just part of it.
+-   3NF: It is used to ensure that the data in the database is not redundant. It is used to ensure that each attribute in a table is dependent on the primary key. Goes further by making sure non-key data depends only on the primary key, not on other non-key data.
+
+-   2NF makes sure all data depends on the entire primary key, and 3NF makes sure it only depends on the key — not other data.
+-   If a table has a composite primary key (meaning it uses more than one column to uniquely identify a row), then in 2NF, every non-key column must depend on both parts — not just one. If it depends on only part, that’s called a partial dependency, and it violates 2NF.
+
+#
+
+📋 Example Table: Enrollments
+
+|StudentID|CourseID|CourseName|
+|---|---|---|
+|1|CS101|Intro to CS|
+|2|CS101|Intro to CS|
+
+This table has a composite primary key: (StudentID, CourseID)
+🔍 1NF:
+
+    ✅ Each column has atomic values — so we're good here.
+
+🔍 2NF Check:
+
+    ⚠️ CourseName depends only on CourseID, not on the whole primary key (StudentID + CourseID).
+
+    ❌ So this violates 2NF because of a partial dependency.
+
+✅ Fix: Move CourseID and CourseName to a separate Courses table.
+🔍 3NF Check:
+
+Let’s say we now add DepartmentName, and it depends on CourseName.
+
+That’s a transitive dependency:
+CourseID → CourseName → DepartmentName
+
+    ❌ Violates 3NF, because DepartmentName depends on a non-key column (CourseName), not directly on the key.
+
+✅ Fix: Move DepartmentName to a Departments table.
+
+#
 
 ## Codelabs Learning Assistant
 
 > [Codelabs Learning Assistant Demo](https://chatgpt.com/g/g-68484cbcb348819181c3f4137b0b7c49-codelabs-learning-assistant)
 >
-> -   Show students how to ask the Codelabs Learning Assistant: "What is one way to keep a database secure?"
+> -   Show students how to ask the Codelabs Learning Assistant: "Can you explain the difference between 2nd and 3rd normal form?"
 
 ## Security and Best Practices
 
@@ -83,11 +135,7 @@ WHERE id = 1;
 -   Scope: Managing and maintaining database systems.
 -   Responsibilities: Backup, recovery, and performance monitoring.
 
-## Codelabs Learning Assistant
 
-> [Codelabs Learning Assistant Demo](https://chatgpt.com/g/g-68484cbcb348819181c3f4137b0b7c49-codelabs-learning-assistant)
->
-> -   Demonstrate for students how to use the Codelabs Learning Assistant for creative exploration: "Can you suggest a real-world scenario where a many-to-many relationship is needed?"
 
 # Live Coding Session
 
@@ -113,9 +161,9 @@ CREATE TABLE Publishers (
 CREATE TABLE Books (
     BookID INT PRIMARY KEY,
     Title TEXT,
+    YearPublished INT,
     AuthorID INT,
     PublisherID INT,
-    YearPublished INT,
     FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID),
     FOREIGN KEY (PublisherID) REFERENCES Publishers(PublisherID)
 );
@@ -127,23 +175,26 @@ Populate the Authors and Publishers tables with data, then add books linking to 
 
 ```sql
 INSERT INTO Authors (AuthorID, Name, Bio) VALUES (1, 'George Orwell', 'English novelist and essayist...');
+INSERT INTO Authors (ID, Name, Bio) VALUES (2, 'Martha Wells', 'An author who...');
 INSERT INTO Publishers (PublisherID, Name, Address) VALUES (1, 'Penguin Books', 'London, UK');
+INSERT INTO Publishers (ID, Name, Address) VALUES (2, 'Tor Books', 'New York, NY');
 
-INSERT INTO Books (BookID, Title, AuthorID, PublisherID, YearPublished)
-VALUES (1, '1984', 1, 1, 1949);
+INSERT INTO Books (BookID, Title, YearPublished, AuthorID, PublisherID)
+VALUES (1, '1984', 1950, 1, 1),
+       (2, 'All Systems Red', 2017, 2, 2);
 ```
 
 Let's update book information based on specific conditions.
 
 ```sql
 UPDATE Books
-SET YearPublished = 1950
+SET YearPublished = 1949
 WHERE Title = '1984' AND AuthorID = 1;
 
 SELECT * FROM Books;
 ```
 
-This updates the publication year of '1984' by George Orwell to 1950, demonstrating how to use conditions in an update statement.
+This updates the publication year of '1984' by George Orwell to 1949, demonstrating how to use conditions in an update statement.
 
 To showcase the relationship between books, authors and publishers, let's perform the following query:
 
@@ -164,8 +215,8 @@ Let's now delete records from Books where the publisher is no longer active.
 ```sql
 DELETE FROM Books
 WHERE PublisherID IN (SELECT PublisherID FROM Publishers WHERE Name = 'Penguin Books');
+```
 
 This statement deletes books published by 'Penguin Books', showing how to combine DELETE with a subquery.
-```
 
 # Any questions?
