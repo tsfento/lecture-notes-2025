@@ -174,9 +174,7 @@
   - An interactive shell for experimenting with Rails applications.
   - Accessible via `rails console`.
 
-## Codelabs Learning Assistant
-
-## Live Coding
+# Live Coding
 
 In this lesson, we delve into the creation and management of multiple tables in Ruby on Rails and explore how to define relationships between different data models.
 
@@ -229,7 +227,7 @@ The rails console is an interactive shell for accessing the Rails applications. 
 Create a user record:
 
 ```bash
-user = User.create(first_name: 'John', last_name: 'Doe', email: 'johndoe123@email.com', username: 'johndoe123')
+user = User.create(first_name: 'John', last_name: 'Doe', email: 'johndoe@email.com', username: 'johndoe')
 ```
 
 Create blog model:
@@ -287,7 +285,7 @@ end
 By executing the `create_profile` method, we are creating a profile for every user that is created.
 
 ```bash
-user = User.create(first_name: "Jane", last_name: "Doe", email: "janedoe123@gmail.com", username: "janedoe123")
+user = User.create(first_name: "Jane", last_name: "Doe", email: "janedoe@gmail.com", username: "janedoe")
 user.profile
 ```
 
@@ -341,6 +339,10 @@ end
 > [Codelabs Learning Assistant Demo](https://chatgpt.com/g/g-68484cbcb348819181c3f4137b0b7c49-codelabs-learning-assistant)
 >
 > -   Demonstrate for students how to use the Codelabs Learning Assistant for creative exploration: "How do you add a validation to make sure an email is unique in Rails? Can you show me a code example?"
+
+```ruby
+validates :email, presence: true, uniqueness: { case_sensitive: false }
+```
 
 Let's try creating a user without any information:
 
