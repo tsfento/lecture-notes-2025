@@ -13,7 +13,7 @@
 Let's start by creating an Auth Service in our Angular App. This service will be responsible for handling the authentication related tasks like login, logout, and checking if the user is authenticated.
 
 ```bash
-ng g service core/services/authentication 
+ng g service core/services/authentication
 ```
 
 ```typescript
@@ -24,38 +24,38 @@ import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
-	providedIn: 'root',
+  providedIn: 'root',
 })
 export class AuthenticationService {
-	private readonly tokenSubject = new BehaviorSubject<string | null>(null);
+  private readonly tokenSubject = new BehaviorSubject<string | null>(null);
 
-	constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
-	login(username: string, password: string): Observable<{ token: string }> {
-		return this.http.post<{ token: string }>(`${environment.apiUrl}/login`, {
-			username,
-			password,
-		});
-	}
+  login(username: string, password: string): Observable<{ token: string }> {
+    return this.http.post<{ token: string }>(`${environment.apiUrl}/login`, {
+      username,
+      password,
+    });
+  }
 
-	setToken(token: string) {
-		localStorage.setItem('token', token);
-		this.tokenSubject.next(token);
-	}
+  setToken(token: string) {
+    localStorage.setItem('token', token);
+    this.tokenSubject.next(token);
+  }
 
-	getToken() {
-		return localStorage.getItem('token');
-	}
+  getToken() {
+    return localStorage.getItem('token');
+  }
 
-	isLoggedIn() {
-		return !!this.getToken();
-	}
+  isLoggedIn() {
+    return !!this.getToken();
+  }
 
-	logout() {
-		localStorage.removeItem('token');
-		this.tokenSubject.next(null);
-		this.router.navigate(['/login']);
-	}
+  logout() {
+    localStorage.removeItem('token');
+    this.tokenSubject.next(null);
+    this.router.navigate(['/login']);
+  }
 }
 ```
 
@@ -69,7 +69,12 @@ ng g c features/auth/login
 
 ```typescript
 import { Component } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormGroup,
+  FormControl,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
 
@@ -82,24 +87,29 @@ import { AuthenticationService } from '../services/authentication.service';
 })
 export class LoginComponent {
   loginForm: FormGroup = new FormGroup({
-      username: new FormControl('', Validators.required),
-      password: new FormControl('', Validators.required),
-    });;
+    username: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required),
+  });
 
-  constructor(private authService: AuthenticationService, private router: Router) {}
+  constructor(
+    private authService: AuthenticationService,
+    private router: Router
+  ) {}
 
   login() {
     if (this.loginForm.valid) {
-      this.authService.login(this.loginForm.value.username, this.loginForm.value.password).subscribe({
-        next: (res: { token: string }) => {
-          console.log('Logged in with token:', res.token);
-          this.authService.setToken(res.token);
-          this.router.navigate(['/']);
-        },
-        error: (error: any) => {
-          console.error('Login error', error);
-        },
-      });
+      this.authService
+        .login(this.loginForm.value.username, this.loginForm.value.password)
+        .subscribe({
+          next: (res: { token: string }) => {
+            console.log('Logged in with token:', res.token);
+            this.authService.setToken(res.token);
+            this.router.navigate(['/']);
+          },
+          error: (error: any) => {
+            console.error('Login error', error);
+          },
+        });
     }
   }
 }
@@ -127,16 +137,19 @@ Add the login route to app.routes.ts
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-
   {
     path: '',
     pathMatch: 'full',
-    loadComponent: () => import('./features/home/home.component').then((c) => c.HomeComponent)
+    loadComponent: () =>
+      import('./features/home/home.component').then((c) => c.HomeComponent),
   },
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login/login.component').then((c) => c.LoginComponent)
-  }
+    loadComponent: () =>
+      import('./features/auth/login/login.component').then(
+        (c) => c.LoginComponent
+      ),
+  },
 ];
 ```
 
@@ -146,7 +159,9 @@ export const routes: Routes = [
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 40px); /* Full viewport height to ensure vertical centering */
+  min-height: calc(
+    100vh - 40px
+  ); /* Full viewport height to ensure vertical centering */
   background-color: #f0f0f0; /* Light background for the overall page */
 }
 
@@ -162,8 +177,8 @@ form {
   gap: 1rem;
 }
 
-label{
-  margin-right: .5rem;
+label {
+  margin-right: 0.5rem;
 }
 
 input[type='text'],
@@ -241,12 +256,17 @@ export class MainLayoutComponent {
     <!-- Sidebar content -->
     <nav>
       <img src="/assets/images/logo.png" alt="logo" width="100px" />
-      <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a
+        routerLink="/"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{exact: true}"
+        >Home</a
+      >
       @if (authService.isLoggedIn()){
-        <a (click)="logout()">Logout</a>
-        }@else {
-        <a routerLink="/login">Login</a>
-        }
+      <a (click)="logout()">Logout</a>
+      }@else {
+      <a routerLink="/login">Login</a>
+      }
     </nav>
   </div>
   <div class="content">
