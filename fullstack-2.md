@@ -277,4 +277,125 @@ export class MainLayoutComponent {
 
 Test out the login and logout.
 
+<!-- GUARDS -->
+
+### Adding Guards
+
+```bash
+ng generate guard auth
+```
+
+```bash
+Which type of guard would you like to create? (Press <space> to select, <a> to toggle all, <i> to invert selection, and <enter> to proceed)
+❯◉ CanActivate
+ ◯ CanActivateChild
+ ◯ CanDeactivate
+ ◯ CanMatch
+```
+
+Choose CanActivate and press enter.
+
+```typescript
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthenticationService } from './services/authentication.service';
+
+export const authGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthenticationService);
+  const router = inject(Router);
+
+  if (authService.isLoggedIn()) {
+    return true;
+  } else {
+    router.navigate(['/login']);
+    return false;
+  }
+};
+```
+
+Add the guard to our routes
+
+#### app.routes.ts
+
+```typescript
+import { Routes } from '@angular/router';
+import { authGuard } from './auth.guard';
+
+export const routes: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./features/home/home.component').then((c) => c.HomeComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./features/auth/login/login.component').then(
+        (c) => c.LoginComponent
+      ),
+  },
+];
+```
+
+### No Auth Guard
+
+```bash
+ng generate guard no-auth
+```
+
+```bash
+germancruz@Code-Coach-Three fe_todo_list_v2 % ng generate guard no-auth
+? Which type of guard would you like to create? (Press <space> to select, <a> to toggle all, <i> to invert selection, and <enter> to proceed)
+❯◉ CanActivate
+ ◯ CanActivateChild
+ ◯ CanDeactivate
+ ◯ CanMatch
+```
+
+Choose CanActivate and press enter.
+
+```typescript
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthenticationService } from './services/authentication.service';
+
+export const noAuthGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthenticationService);
+  const router = inject(Router);
+
+  if (authService.isLoggedIn()) {
+    router.navigate(['/']);
+    return false;
+  } else {
+    return true;
+  }
+};
+```
+
+Apply this guard to the login route.
+
+#### app.routes.ts
+
+```typescript
+import { Routes } from '@angular/router';
+import { authGuard } from './auth.guard';
+import { noAuthGuard } from './no-auth.guard';
+
+export const routes: Routes = [
+  {
+    path: '',
+    loadComponent: () => import('./features/home/home.component').then((c) => c.HomeComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./features/auth/login/login.component').then((c) => c.LoginComponent),
+    canActivate: [noAuthGuard],
+  },
+];
+```
+
+Login and test the guards.
+
 # Any questions?
