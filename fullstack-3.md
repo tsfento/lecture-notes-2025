@@ -9,39 +9,6 @@
 
 ### Creating a Blog
 
-Let's add a route so logged in users can create a blog.
-
-```html
-<div class="layout-container">
-  <div class="sidebar">
-    <!-- Sidebar content -->
-    <nav>
-      <img src="/assets/images/logo.png" alt="logo" width="100px" />
-      <a
-        routerLink="/"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{exact: true}"
-        >Home
-      </a>
-      @if (authService.isLoggedIn()){
-      <a
-        routerLink="/blogs/new"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        >Create Blog</a
-      >
-      <a (click)="logout()">Logout</a>
-      }@else {
-      <a routerLink="/login">Login</a>
-      }
-    </nav>
-  </div>
-  <div class="content">
-    <router-outlet></router-outlet>
-  </div>
-</div>
-```
-
 Let's create a component for a form that will allow us to create a blog.
 
 ```bash
@@ -78,6 +45,39 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
 ];
+```
+
+Now, let's add a button for it to our sidebar.
+
+```html
+<div class="layout-container">
+  <div class="sidebar">
+    <!-- Sidebar content -->
+    <nav>
+      <img src="/assets/images/logo.png" alt="logo" width="100px" />
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}"
+        >Home
+      </a>
+      @if (authService.isLoggedIn()){
+      <a
+        routerLink="/blogs/new"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >Create Blog</a
+      >
+      <a (click)="logout()">Logout</a>
+      }@else {
+      <a routerLink="/login">Login</a>
+      }
+    </nav>
+  </div>
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>
 ```
 
 Let's go to our blog service and add a method to create a blog.
