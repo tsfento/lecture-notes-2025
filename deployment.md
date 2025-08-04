@@ -103,11 +103,13 @@ services:
 
 Change betablogclassname to `beta-blog-classname` or any name you want to use.
 
-These changes are based on pre-8 versions of Rails. Starting with version 8, there were some solutions added to Rails to simplify application architecture and possibly reduce the need for external services. These solutions are Solid Cache, Solid Cable, and Solid Queue.
+### Rails 8 Additions
+
+The setup above is based on pre-8 versions of Rails. Starting with version 8, there were some solutions added to Rails to simplify application architecture and possibly reduce the need for external services. These solutions are Solid Cache, Solid Cable, and Solid Queue.
 
 Solid Cache is an implementation for caching data and uses disk storage rather than memory. Solid Cable is an option to manage WebSocket connections. Finally, Solid Queue is a database-driven solution for background job processing.
 
-Implementing these solutions are outside the scope of this lesson, so we will need to a few more modifications.
+Implementing these solutions are outside the scope of this lesson, so we will need to make a few more modifications.
 
 Firstly, in your `config/cache.yml` file, comment out the the database line for production.
 
