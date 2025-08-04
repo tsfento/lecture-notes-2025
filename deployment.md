@@ -103,7 +103,43 @@ services:
 
 Change betablogclassname to `beta-blog-classname` or any name you want to use.
 
-Commit to Github.
+These changes are based on pre-8 versions of Rails. Starting with version 8, there were some solutions added to Rails to simplify application architecture and possibly reduce the need for external services. These solutions are Solid Cache, Solid Cable, and Solid Queue.
+
+Solid Cache is an implementation for caching data and uses disk storage rather than memory. Solid Cable is an option to manage WebSocket connections. Finally, Solid Queue is a database-driven solution for background job processing.
+
+Implementing these solutions are outside the scope of this lesson, so we will need to a few more modifications.
+
+Firstly, in your `config/cache.yml` file, comment out the the database line for production.
+
+```yaml
+production:
+# database: cache
+<<: *default
+```
+
+Next, in your `config/cable.yml` file, make sure the adapters are set like so:
+
+```yaml
+development:
+  adapter: async
+
+test:
+  adapter: test
+
+production:
+  adapter: async
+```
+
+Finally, in your `config/environments/production.rb`, comment out any Solid Queue configurations:
+
+```ruby
+# config.active_job.queue_adapter = :solid_queue
+# config.solid_queue.connects_to = { database: { writing: :queue } }
+```
+
+With these final changes, we should get no errors from Render when deploying.
+
+Commit these changes to Github.
 
 ### Deploying with Render
 
